@@ -1,0 +1,69 @@
+// font-weight helper: 100 Extra Light or Ultra Light; 200 Light or Thin; 300 Book or Demi; 400 Regular or Normal; 500 Medium; 600 Semibold or Demibold; 700 Bold; 800 Black or Extra Bold or Heavy; 900 Extra Black or Fat or Ultra Black
+
+// =============================================================================
+// String Replace
+// =============================================================================
+
+@function str-replace($string, $search, $replace: "") {
+  $index: str-index($string, $search);
+
+  @if $index {
+    @return str-slice($string, 1, $index - 1) + $replace + str-replace(str-slice($string, $index + str-length($search)), $search, $replace);
+  }
+
+  @return $string;
+}
+
+// =============================================================================
+// Font Face
+// =============================================================================
+
+@mixin font-face($name, $path, $weight: null, $style: null, $exts: eot woff2 woff ttf svg) {
+  $src: null;
+
+  $extmods: (
+          eot: "?",
+          svg: "#" + str-replace($name, " ", "_")
+  );
+
+  $formats: (
+          otf: "opentype",
+          ttf: "truetype"
+  );
+
+  @each $ext in $exts {
+    $extmod: if(map-has-key($extmods, $ext), $ext + map-get($extmods, $ext), $ext);
+    $format: if(map-has-key($formats, $ext), map-get($formats, $ext), $ext);
+    $src: append($src, url(quote($path + "." + $extmod)) format(quote($format)), comma);
+  }
+
+  @font-face {
+    font-family: quote($name);
+    font-style: $style;
+    font-weight: $weight;
+    src: $src;
+  }
+}
+
+@include font-face("Gotham Pro", '../fonts/GothamPro/GothamPro-Regular', 400, normal, eot ttf woff);
+
+@include font-face("Gotham Pro", '../fonts/GothamPro/GothamPro-RegularItalic', 400, italic, eot ttf woff);
+
+@include font-face("Gotham Pro", '../fonts/GothamPro/GothamPro-Bold', 700, normal, eot ttf woff);
+
+@include font-face("Gotham Pro", '../fonts/GothamPro/GothamPro-Black', 900, normal, eot ttf woff);
+
+@include font-face("Muller", '../fonts/Muller/Muller-Regular', 400, normal, eot ttf woff svg);
+
+@include font-face("Open Sans", '../fonts/OpenSans/OpenSans-Regular', 400, normal, eot ttf woff);
+
+@include font-face("Roboto", '../fonts/RobotoRegular/RobotoRegular', 400, normal, eot ttf woff);
+
+@include font-face("Roboto", '../fonts/RobotoBlack/RobotoBlack', 900, normal, eot ttf woff);
+
+@include font-face("Roboto", '../fonts/RobotoMedium/RobotoMedium', 600, normal, eot ttf woff);
+
+@include font-face("fontello", '../fonts/IconFont/fontello', normal, normal, eot ttf woff woff2 svg);
+
+@include font-face("Material Icons", '../fonts/MaterialIcons/MaterialIconsRegular', 400, normal, eot ttf woff woff2 );
+
